@@ -9,17 +9,24 @@ pipeline {
             }
         }
 
-        stage('部署静态页面') {
+        stage('部署到服务器') {
             steps {
-                sh 'mkdir -p /tmp/jenkins-html-demo'
-                sh 'cp index.html /tmp/jenkins-html-demo/index.html'
+                sshagent(credentials: ['server-root-ssh']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no root@8.136.188.3 "mkdir -p /var/www/html/jenkins-demo"
+                        scp -o StrictHostKeyChecking=no index.html root@8.136.188.3:/var/www/html/jenkins-demo/index.html
+                    '''
+                }
             }
         }
 
-        stage('验证部署结果') {
+        stage('验证服务器文件') {
             steps {
-                sh 'ls -la /tmp/jenkins-html-demo'
-                sh 'cat /tmp/jenkins-html-demo/index.html'
+                sshagent(credentials: ['server-root-ssh']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no root@8.136.188.3 "ls -la /var/www/html/jenkins-demo && cat /var/www/html/jenkins-demo/index.html"
+                    '''
+                }
             }
         }
     }
