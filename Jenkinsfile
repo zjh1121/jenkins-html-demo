@@ -4,22 +4,22 @@ pipeline {
     stages {
         stage('查看工作目录') {
             steps {
-                bat 'cd'
-                bat 'dir'
+                sh 'pwd'
+                sh 'ls -la'
             }
         }
 
         stage('部署静态页面') {
             steps {
-                bat 'if not exist C:\\jenkins-html-demo mkdir C:\\jenkins-html-demo'
-                bat 'copy index.html C:\\jenkins-html-demo\\index.html'
+                sh 'mkdir -p /tmp/jenkins-html-demo'
+                sh 'cp index.html /tmp/jenkins-html-demo/index.html'
             }
         }
 
         stage('验证部署结果') {
             steps {
-                bat 'dir C:\\jenkins-html-demo'
-                bat 'type C:\\jenkins-html-demo\\index.html'
+                sh 'ls -la /tmp/jenkins-html-demo'
+                sh 'cat /tmp/jenkins-html-demo/index.html'
             }
         }
     }
